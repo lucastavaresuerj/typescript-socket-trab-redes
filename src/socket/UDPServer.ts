@@ -1,6 +1,6 @@
 import UDPSocket from "./UDPSocket";
 
-export type SocketContructOptions = {
+type SocketContructOptions = {
   port?: number;
   onListening?: () => void;
 };

@@ -58,10 +58,6 @@ export default class UDPSocket {
     listener: (err: Error) => void,
     listenerOptions?: ListenerOptions
   ): void {
-    this.udpSocket.on("error", (err) => {
-      console.log("deu ruim");
-      console.error(err);
-    });
     this.setListenersOptions("error", listener, { ...listenerOptions });
   }
 
