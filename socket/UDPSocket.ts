@@ -1,62 +1,91 @@
-import { createSocket, RemoteInfo, Socket } from "dgram";
+import { createSocket, RemoteInfo, Socket, BindOptions } from "dgram";
+import { EventEmitter } from "stream";
 
-export type SocketContructOptions = {
-  port?: number;
-  onListening?: (udpSocket: Socket) => void;
+export type ListenerOptions = {
+  removeListenersBefore?: boolean;
+  prependListener?: boolean;
 };
 
 export default class UDPSocket {
-  private udpSocket: Socket;
+  protected udpSocket: Socket;
 
-  constructor(
-    options: SocketContructOptions = {
-      port: 3000,
-      onListening: (udpSocket) => {},
-    }
-  ) {
-    const { port, onListening } = options;
+  constructor() {
     this.udpSocket = createSocket("udp4");
 
-    this.udpSocket.bind(
-      port,
-      "", // Listennig to all: 0.0.0.0
-      onListening
-        ? () => onListening(this.udpSocket)
-        : (): void => {
-            console.log(
-              `listening on port ${port} at address ${
-                this.udpSocket.address().address
-              }`
-            );
-          }
-    );
+    this.onMessage((msg: Buffer, { address, port }: RemoteInfo) => {
+      console.log(`${address}:${port} >> ${msg.toString("utf8")}`);
+    });
   }
 
-  get socket() {
-    return this.udpSocket;
+  listen(
+    bindOptions: BindOptions = { port: undefined, address: "0.0.0.0" },
+    listener?: () => void
+  ) {
+    this.udpSocket.bind(bindOptions);
+    if (listener) {
+      this.onListening(listener);
+    } else {
+      this.onListening((): void => {
+        console.log(
+          `listening on 127.0.0.1:${bindOptions.port} to address ${
+            this.udpSocket.address().address
+          }`
+        );
+      });
+    }
   }
 
-  onClose(listener: () => void) {
-    this.udpSocket.on("close", listener);
+  send(message: string, { address = "localhost", port = 5000 }): void {
+    this.udpSocket.send(Buffer.from(message), port, address);
   }
 
-  onConnect(listener: () => void) {
-    this.udpSocket.on("connect", listener);
+  onClose(listener: () => void, listenerOptions?: ListenerOptions): void {
+    this.setListenersOptions("close", listener, { ...listenerOptions });
   }
 
-  onMessage(listener: (msg: Buffer, rinfo: RemoteInfo) => void) {
-    this.udpSocket.on("message", listener);
+  onConnect(listener: () => void, listenerOptions?: ListenerOptions): void {
+    this.setListenersOptions("connect", listener, { ...listenerOptions });
   }
 
-  onError(listener: (err: Error) => void) {
-    this.udpSocket.on("error", listener);
+  onMessage(
+    listener: (msg: Buffer, rinfo: RemoteInfo) => void,
+    listenerOptions?: ListenerOptions
+  ): void {
+    this.setListenersOptions("message", listener, { ...listenerOptions });
   }
 
-  onListening(listener: () => void) {
-    this.udpSocket.on("listening", listener);
+  onError(
+    listener: (err: Error) => void,
+    listenerOptions?: ListenerOptions
+  ): void {
+    this.udpSocket.on("error", (err) => {
+      console.log("deu ruim");
+      console.error(err);
+    });
+    this.setListenersOptions("error", listener, { ...listenerOptions });
   }
 
-  on(event: SocketEventsUDP, listener: (...args: any[]) => void) {
+  onListening(listener: () => void, listenerOptions?: ListenerOptions): void {
+    this.setListenersOptions("listening", listener, { ...listenerOptions });
+  }
+
+  onEvent(event: SocketEventsUDP, listener: (...args: any[]) => void): void {
     this.udpSocket.on(event, listener);
+  }
+
+  private setListenersOptions(
+    event: SocketEventsUDP,
+    listener: (...args: any[]) => void,
+    { removeListenersBefore = false, prependListener = false }: ListenerOptions
+  ) {
+    const eventEmitter = this.udpSocket as EventEmitter;
+    if (removeListenersBefore) {
+      eventEmitter.removeAllListeners(event);
+    }
+    if (prependListener) {
+      eventEmitter.prependListener(event, listener);
+    } else {
+      eventEmitter.addListener(event, listener);
+    }
   }
 }

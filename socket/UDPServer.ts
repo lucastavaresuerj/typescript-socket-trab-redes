@@ -1,24 +1,16 @@
-import { RemoteInfo } from "dgram";
-import UDPSocket, { SocketContructOptions } from "./UDPSocket";
+import UDPSocket from "./UDPSocket";
+
+export type SocketContructOptions = {
+  port?: number;
+  onListening?: () => void;
+};
 
 export default class UDPServer extends UDPSocket {
-  constructor(
-    options: SocketContructOptions = {
-      port: 3000,
-      onListening: (udpSocket) => {},
-    }
-  ) {
-    super({
-      port: options?.port,
-      onListening:
-        options.onListening ||
-        ((socket) => {
-          console.log(`Server listening at port ${socket.address().port}`);
-        }),
-    });
+  constructor(options: SocketContructOptions) {
+    super();
 
-    super.onMessage((msg: Buffer, rinfo: RemoteInfo) => {
-      console.log("Recive a message", msg.toString());
-    });
+    const { port, onListening } = options;
+
+    this.listen({ port }, onListening);
   }
 }
