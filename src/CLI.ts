@@ -44,7 +44,7 @@ export default class CLI {
     alias?: string;
   }): string | number | null {
     const regex = new RegExp(
-      `/(-${keys.abrv}${keys.alias ? `|--${keys.alias}` : ""})=(.+)/`
+      `(-${keys.abrv}${keys.alias ? `|--${keys.alias}` : ""})=(.+)`
     );
 
     const match = this.args.match(regex);
