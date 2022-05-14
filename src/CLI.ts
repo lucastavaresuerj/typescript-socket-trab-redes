@@ -1,6 +1,6 @@
 type argsOptions = {
   [abrv: string]: {
-    type?: string | number;
+    type?: "string" | "number";
     choice?: string[] | number[];
     alias?: string;
     default?: string | number;
@@ -26,11 +26,24 @@ export default class CLI {
           abrv,
           alias: this.options[abrv]?.alias,
         });
-        const result = { [abrv]: value };
+
+        let valueParse: string | number | null = null;
+
+        if (value) {
+          if (!this.options[abrv].type || this.options[abrv].type == "string") {
+            valueParse = (value as string)
+              .replace(/^('|")/, "")
+              .replace(/('|")$/, "");
+          } else if (this.options[abrv].type == "number") {
+            valueParse = parseFloat(value as string);
+          }
+        }
+
+        const result = { [abrv]: valueParse };
         const { alias } = this.options[abrv];
 
         if (alias !== undefined) {
-          result[alias] = value;
+          result[alias] = valueParse;
         }
 
         return { ...acc, ...result };
@@ -42,9 +55,9 @@ export default class CLI {
   private findValue(keys: {
     abrv: keyof argsOptions;
     alias?: string;
-  }): string | number | null {
+  }): string | null {
     const regex = new RegExp(
-      `(-${keys.abrv}${keys.alias ? `|--${keys.alias}` : ""})=(.+)`
+      `(-${keys.abrv}${keys.alias ? `|--${keys.alias}` : ""})=(.+?)( +| *$)`
     );
 
     const match = this.args.match(regex);

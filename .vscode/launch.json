@@ -11,7 +11,11 @@
       "type": "node",
       "runtimeArgs": ["-r", "ts-node/register"],
       "runtimeExecutable": "node",
-      "args": ["--inspect", "${workspaceFolder}/src/index.ts", "--port=3000"],
+      "args": [
+        "--inspect",
+        "${workspaceFolder}/src/index.ts",
+        "--port=3000 --type=client -a='128.7.31.23'"
+      ],
       "cwd": "${workspaceRoot}",
       "skipFiles": ["<node_internals>/**", "node_modules/**"]
     }

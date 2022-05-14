@@ -8,6 +8,7 @@ export type ListenerOptions = {
 
 export default class UDPSocket {
   protected udpSocket: Socket;
+  private isBind = false;
 
   constructor() {
     this.udpSocket = createSocket("udp4");
@@ -83,5 +84,23 @@ export default class UDPSocket {
     } else {
       eventEmitter.addListener(event, listener);
     }
+  }
+
+  get info() {
+    try {
+      return this.udpSocket.address();
+    } catch (error) {
+      console.error("Socket unbound", error);
+      return null;
+    }
+  }
+
+  waitForBind(timeout: number = 3000): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const rejectTimeout = setTimeout(reject, timeout);
+      while (!this.isBind) {}
+      clearTimeout(rejectTimeout);
+      resolve();
+    });
   }
 }

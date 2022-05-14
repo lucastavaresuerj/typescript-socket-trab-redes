@@ -10,7 +10,7 @@
     "start": "npx ts-node src/index.ts",
     "start:server": "npx ts-node src/server.ts",
     "start:client": "npx ts-node src/client.ts",
-    "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'npm start'"
+    "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'npm start --'"
   },
   "dependencies": {}
 }
