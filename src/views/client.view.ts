@@ -1,44 +1,18 @@
-import EventEmitter from "events";
-
 import ClientController from "../controllers/client.controller";
+import { View, ConnectionInfo } from "./View";
 
 export type ClientViewEvent = "defineRequest" | "getResponse" | "testEmit";
 
-export type ConnectionInfo = {
-  port: number;
-  address: string;
-};
-
-export class ClientView {
-  viewState = new EventEmitter();
-  connectionInfo!: {
-    server: ConnectionInfo;
-    client: ConnectionInfo;
-  };
-
+export class ClientView extends View<ClientViewEvent> {
   constructor(serverInfo: ConnectionInfo, clientInfo: ConnectionInfo) {
+    super(serverInfo, clientInfo);
     this.connectionInfo = {
       server: serverInfo,
       client: clientInfo,
     };
 
-    this.on("defineRequest", ClientController.defineRequest);
-    this.on("getResponse", ClientController.getResponse);
-    this.on("testEmit", ClientController.test);
-  }
-
-  on(event: ClientViewEvent, callback: (context: any) => void) {
-    this.viewState.on(event, (context) => {
-      callback(context);
-    });
-  }
-
-  emit(event: ClientViewEvent, context?: any) {
-    this.addClientContext(context);
-    this.viewState.emit(event, context);
-  }
-
-  private addClientContext(context: any): void {
-    context.connectionInfo = this.connectionInfo;
+    this.onView("defineRequest", ClientController.defineRequest);
+    this.onView("getResponse", ClientController.getResponse);
+    this.onView("testEmit", ClientController.test);
   }
 }
