@@ -9,8 +9,11 @@ export type ConnectionInfo = {
 
 export class View<ViewEvents extends string> {
   viewState = new EventEmitter();
+  context = {};
 
-  constructor(private socket: UDPSocket) {}
+  constructor(private socket: UDPSocket) {
+    this.context = { socket: this.socket };
+  }
 
   onView(event: ViewEvents, callback: (context: any) => void) {
     this.viewState.on(event, (context) => {
@@ -23,8 +26,11 @@ export class View<ViewEvents extends string> {
     this.viewState.emit(event, context);
   }
 
+  addToContext(name: string, context: any) {
+    this.context = { ...this.context, [name]: context };
+  }
+
   private addClientContext(context: any): void {
-    // context.connectionInfo = this.connectionInfo;
-    context.socket = this.socket;
+    context = { context, ...this.context };
   }
 }

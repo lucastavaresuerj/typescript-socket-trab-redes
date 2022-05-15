@@ -1,6 +1,5 @@
 import { UDPClient } from "../socket";
 import { ClientView } from "../views/client.view";
-import { ConnectionInfo } from "../views/View";
 
 export default async function (argsv: AgrsValues) {
   const { port, address } = argsv;
