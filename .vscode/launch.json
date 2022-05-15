@@ -5,16 +5,33 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm start",
-      "name": "Run npm start",
+      "command": "npm run start:server",
+      "name": "Run npm start server",
       "request": "launch",
       "type": "node",
       "runtimeArgs": ["-r", "ts-node/register"],
       "runtimeExecutable": "node",
+      "sourceMaps": true,
       "args": [
         "--inspect",
         "${workspaceFolder}/src/index.ts",
-        "--port=3000 --type=client -a='128.7.31.23'"
+        "--type=server --port=3000"
+      ],
+      "cwd": "${workspaceRoot}",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"]
+    },
+    {
+      "command": "npm run start:client",
+      "name": "Run npm start client",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "runtimeExecutable": "node",
+      "sourceMaps": true,
+      "args": [
+        "--inspect",
+        "${workspaceFolder}/src/index.ts",
+        "--type=client --port=3000"
       ],
       "cwd": "${workspaceRoot}",
       "skipFiles": ["<node_internals>/**", "node_modules/**"]

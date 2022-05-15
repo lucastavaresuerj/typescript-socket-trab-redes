@@ -1,20 +1,31 @@
-import readline from "readline";
+import { createInterface } from "readline";
+import { UDPClient } from "../socket";
 
-const rl = readline.createInterface({
+const readline = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
 export default class ClientController {
   constructor() {}
+  timer!: Date;
 
-  static defineRequest(context: any): void {}
+  defineRequest(context: any): void {}
 
-  static getResponse(context: any): void {
+  getResponse(context: any): void {
     console.log(context);
   }
 
-  static test(context: any): void {
-    console.log(context);
+  test(context: any): void {
+    (context.socket as UDPClient).send("hy");
+    console.log("aqui");
+  }
+
+  private get rtt() {
+    return;
+  }
+
+  private set time(timeStamp: Date) {
+    this.timer = timeStamp;
   }
 }

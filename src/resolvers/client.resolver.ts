@@ -6,9 +6,9 @@ export default async function (argsv: AgrsValues) {
   const { port, address } = argsv;
 
   const socket = new UDPClient({ port, address });
-  await socket.waitForBind();
 
-  const view = new ClientView({ port, address }, socket.info as ConnectionInfo);
+  const view = new ClientView(socket);
+  socket.onListening(() => view.changeView("testEmit"));
 
   socket.onListening(() => view.changeView("defineRequest"));
 

@@ -7,11 +7,9 @@ type argsOptions = {
   };
 };
 
-export default class CLI {
+export default class Args {
   constructor(private options: argsOptions) {
     this.args = process.argv.slice(2).toString().replace(",", " ");
-
-    console.log(process.argv);
   }
 
   args: string;
@@ -61,8 +59,6 @@ export default class CLI {
     );
 
     const match = this.args.match(regex);
-
-    console.log(match);
 
     try {
       return match![2];

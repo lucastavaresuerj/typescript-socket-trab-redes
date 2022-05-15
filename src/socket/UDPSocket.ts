@@ -16,6 +16,11 @@ export default class UDPSocket {
     this.onMessage((msg: Buffer, { address, port }: RemoteInfo) => {
       console.log(`${address}:${port} >> ${msg.toString("utf8")}`);
     });
+
+    this.udpSocket.on("listening", () => {
+      this.isBind = true;
+      console.log("listening");
+    });
   }
 
   listen(

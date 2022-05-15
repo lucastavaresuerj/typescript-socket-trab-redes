@@ -8,8 +8,8 @@
   },
   "scripts": {
     "start": "npx ts-node src/index.ts",
-    "start:server": "npx ts-node src/index.ts --type=server",
-    "start:client": "npx ts-node src/index.ts --type=client",
+    "start:server": "npm start -- --type=server --port=3000",
+    "start:client": "npm start -- --type=client --port=3000",
     "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'npm start'"
   },
   "dependencies": {}

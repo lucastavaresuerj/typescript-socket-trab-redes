@@ -1,5 +1,7 @@
 import EventEmitter from "events";
 
+import { UDPSocket } from "../socket";
+
 export type ConnectionInfo = {
   port: number;
   address: string;
@@ -7,17 +9,8 @@ export type ConnectionInfo = {
 
 export class View<ViewEvents extends string> {
   viewState = new EventEmitter();
-  connectionInfo!: {
-    server: ConnectionInfo;
-    client: ConnectionInfo;
-  };
 
-  constructor(serverInfo: ConnectionInfo, clientInfo: ConnectionInfo) {
-    this.connectionInfo = {
-      server: serverInfo,
-      client: clientInfo,
-    };
-  }
+  constructor(private socket: UDPSocket) {}
 
   onView(event: ViewEvents, callback: (context: any) => void) {
     this.viewState.on(event, (context) => {
@@ -25,12 +18,13 @@ export class View<ViewEvents extends string> {
     });
   }
 
-  changeView(event: ViewEvents, context?: any) {
+  changeView(event: ViewEvents, context: any = {}) {
     this.addClientContext(context);
     this.viewState.emit(event, context);
   }
 
   private addClientContext(context: any): void {
-    context.connectionInfo = this.connectionInfo;
+    // context.connectionInfo = this.connectionInfo;
+    context.socket = this.socket;
   }
 }
