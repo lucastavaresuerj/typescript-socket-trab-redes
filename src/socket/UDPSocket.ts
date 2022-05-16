@@ -8,18 +8,12 @@ export type ListenerOptions = {
 
 export default class UDPSocket {
   protected udpSocket: Socket;
-  private isBind = false;
 
   constructor() {
     this.udpSocket = createSocket("udp4");
 
     this.onMessage((msg: Buffer, { address, port }: RemoteInfo) => {
       console.log(`${address}:${port} >> ${msg.toString("utf8")}`);
-    });
-
-    this.udpSocket.on("listening", () => {
-      this.isBind = true;
-      console.log("listening");
     });
   }
 
@@ -42,7 +36,7 @@ export default class UDPSocket {
   }
 
   send(message: string, { address = "localhost", port = 5000 }): void {
-    this.udpSocket.send(Buffer.from(message), port, address);
+    this.udpSocket.send(Buffer.from(message, 'utf8'), port, address);
   }
 
   onClose(listener: () => void, listenerOptions?: ListenerOptions): void {
@@ -98,14 +92,5 @@ export default class UDPSocket {
       console.error("Socket unbound", error);
       return null;
     }
-  }
-
-  waitForBind(timeout: number = 3000): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const rejectTimeout = setTimeout(reject, timeout);
-      while (!this.isBind) {}
-      clearTimeout(rejectTimeout);
-      resolve();
-    });
   }
 }

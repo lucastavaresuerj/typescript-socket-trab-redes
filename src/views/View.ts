@@ -22,15 +22,14 @@ export class View<ViewEvents extends string> {
   }
 
   changeView(event: ViewEvents, context: any = {}) {
-    this.addClientContext(context);
-    this.viewState.emit(event, context);
+    this.viewState.emit(event, this.addClientContext(context));
   }
 
   addToContext(name: string, context: any) {
     this.context = { ...this.context, [name]: context };
   }
 
-  private addClientContext(context: any): void {
-    context = { context, ...this.context };
+  private addClientContext(context: any): any {
+    return { ...context, ...this.context };
   }
 }

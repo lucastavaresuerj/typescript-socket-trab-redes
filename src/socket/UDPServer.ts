@@ -13,4 +13,9 @@ export default class UDPServer extends UDPSocket {
 
     this.listen({ port }, onListening);
   }
+
+  send(message: string, { address, port }: {address: string, port: number}): void {
+    console.log(`Sending to ${address}:${port}: ${message}`)
+    super.send(message, { address, port });
+  }
 }

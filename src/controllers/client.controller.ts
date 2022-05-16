@@ -10,19 +10,30 @@ export default class ClientController {
   constructor() {}
   timer!: Date;
 
-  defineRequest(context: any): void {}
+  defineRequest({ socket }: {socket: UDPClient}): void {
+    readline.question('O que quer enviar?', (answer: string) => {
+      if (/-?\d+/.test(answer)) {
+        socket.send(JSON.stringify({ type: 'int', val: answer }))
 
-  getResponse(context: any): void {
-    console.log(context);
+      } else if (/^[A-z]$/.test(answer)) {
+        socket.send(JSON.stringify({ type: 'char', val: answer }))
+
+      } else {
+        socket.send(JSON.stringify({ type: 'string', val: answer }))
+
+      }
+
+      this.time  = new Date()
+    })
   }
 
-  test(context: any): void {
-    (context.socket as UDPClient).send("hy");
-    console.log("aqui");
+  getResponse({ msg, rinfo }: any): void {
+    console.log(`Rtt: ${this.rtt}`);
   }
+
 
   private get rtt() {
-    return;
+    return ((new Date()).getTime() - this.timer.getTime()) / 1000;
   }
 
   private set time(timeStamp: Date) {
