@@ -6,30 +6,36 @@ type context = {
   val: string;
   rinfo: RemoteInfo;
   socket: UDPServer;
-}
+  type: string;
+};
 
 export default class ServerController {
   constructor() {}
 
-  incrementInteger({ val, rinfo, socket }: context) {
-    const { address, port } = rinfo as RemoteInfo
+  incrementInteger({ val, rinfo, type, socket }: context) {
+    const { address, port } = rinfo;
     const int = parseInt(val);
+    const result = { type, val: (int + 1).toString() };
 
-    socket.send((int + 1).toString(), { address, port });
+    socket.sendJSON(result, { address, port });
   }
 
-  toogleCase({ val, rinfo, socket }: context) {
-    const { address, port } = rinfo as RemoteInfo;
-    
-    socket.send(/^[a-z]$/.test(val) ? val.toUpperCase() : val.toLowerCase() , { address, port });
+  toogleCase({ val, rinfo, type, socket }: context) {
+    const { address, port } = rinfo;
+    const caseToogled = /^[a-z]$/.test(val)
+      ? val.toUpperCase()
+      : val.toLowerCase();
+
+    const result = { type, val: caseToogled };
+
+    socket.sendJSON(result, { address, port });
   }
 
-  
-  revertString({ val, rinfo, socket }: context) {
-    const { address, port } = rinfo as RemoteInfo;
-    const reverted = Array.from(val).reverse().join('');
-    
-    socket.send(reverted , { address, port });
-  }
+  revertString({ val, rinfo, type, socket }: context) {
+    const { address, port } = rinfo;
+    const reverted = Array.from(val).reverse().join("");
+    const result = { type, val: reverted };
 
+    socket.sendJSON(result, { address, port });
+  }
 }

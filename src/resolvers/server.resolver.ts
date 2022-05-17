@@ -3,7 +3,7 @@ import { RemoteInfo } from "dgram";
 import { UDPServer } from "../socket";
 import { ServerView } from "../views/server.view";
 
-type requisitionType = "int" | "char" | "string"
+type requisitionType = "int" | "char" | "string";
 
 export default function (argsv: AgrsValues) {
   const { port } = argsv;
@@ -16,19 +16,19 @@ export default function (argsv: AgrsValues) {
 
     switch (type as requisitionType) {
       case "int":
-        view.changeView("interger", { val, rinfo });
+        view.changeView("interger", { val, rinfo, type });
 
         break;
       case "char":
-        view.changeView("oneCharacter", { val, rinfo });
+        view.changeView("oneCharacter", { val, rinfo, type });
 
         break;
       case "string":
-        view.changeView("string", { val, rinfo });
+        view.changeView("string", { val, rinfo, type });
 
         break;
       default:
-        console.log(`"type"${type ? `: ${type} é` : ''} inválido`)
+        console.log(`"type"${type ? `: ${type} é` : ""} inválido`);
     }
-  })
+  });
 }
