@@ -8,9 +8,14 @@ export default async function (argsv: AgrsValues) {
 
   const view = new ClientView(socket);
 
-  socket.onListening(() => view.changeView("defineRequest"));
+  view.changeView("defineRequest");
 
-  socket.onMessage((msg, rinfo) =>
-    view.changeView("getResponse", { msg, rinfo })
-  );
+  socket.onMessage((msg, rinfo) => {
+    view.changeView("getResponse", {
+      msg: JSON.parse(msg.toString("utf-8")),
+      rinfo,
+    });
+
+    view.changeView("defineRequest");
+  });
 }

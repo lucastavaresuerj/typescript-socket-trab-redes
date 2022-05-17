@@ -20,14 +20,12 @@ export default class UDPServer extends UDPSocket {
   }
 
   send(message: string, { address, port }: destination): void {
-    console.log(`Sending to ${address}:${port}: ${message}`);
+    console.log(`Sending message to ${address}:${port}: ${message}`);
     super.send(message, { address, port });
   }
 
   sendJSON(message: any = {}, { address, port }: destination) {
-    const stringfiedMessage = JSON.stringify(message);
-
-    console.log(`Sending to ${address}:${port}: "${stringfiedMessage}"`);
-    super.send(stringfiedMessage, { address, port });
+    console.log(`Sending JSON to ${address}:${port}`);
+    super.sendJSON(message, { address, port });
   }
 }

@@ -1,3 +1,5 @@
+import { RemoteInfo } from "dgram";
+
 import { createInterface } from "readline";
 import { UDPClient } from "../socket";
 
@@ -6,37 +8,50 @@ const readline = createInterface({
   output: process.stdout,
 });
 
+type message = {
+  type: string;
+  val: string | number;
+};
+
+type reponse = {
+  msg: message;
+  rinfo?: RemoteInfo;
+};
+
 export default class ClientController {
-  constructor() {}
-  timer!: Date;
+  private _time!: Date;
 
-  defineRequest({ socket }: {socket: UDPClient}): void {
-    readline.question('O que quer enviar?', (answer: string) => {
+  constructor() {
+    this.defineRequest = this.defineRequest.bind(this);
+    this.getResponse = this.getResponse.bind(this);
+    this.time = new Date();
+  }
+
+  public defineRequest({ socket }: { socket: UDPClient }) {
+    readline.question("O que quer enviar? ", (answer: string) => {
+      const request: message = { val: answer, type: "" };
       if (/-?\d+/.test(answer)) {
-        socket.send(JSON.stringify({ type: 'int', val: answer }))
-
+        request.type = "int";
       } else if (/^[A-z]$/.test(answer)) {
-        socket.send(JSON.stringify({ type: 'char', val: answer }))
-
+        request.type = "char";
       } else {
-        socket.send(JSON.stringify({ type: 'string', val: answer }))
-
+        request.type = "string";
       }
-
-      this.time  = new Date()
-    })
+      socket.sendJSON(request);
+    });
+    this.time = new Date();
   }
 
-  getResponse({ msg, rinfo }: any): void {
-    console.log(`Rtt: ${this.rtt}`);
+  public getResponse({ msg: { val } }: reponse) {
+    console.log(`Rtt: ${this.rtt} ms`);
+    console.log(`Resultado da requisição: ${val}\n`);
   }
-
 
   private get rtt() {
-    return ((new Date()).getTime() - this.timer.getTime()) / 1000;
+    return (new Date().getTime() - this._time.getTime()) / 1000;
   }
 
   private set time(timeStamp: Date) {
-    this.timer = timeStamp;
+    this._time = timeStamp;
   }
 }

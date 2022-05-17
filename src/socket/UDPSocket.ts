@@ -36,7 +36,15 @@ export default class UDPSocket {
   }
 
   send(message: string, { address = "localhost", port = 5000 }): void {
-    this.udpSocket.send(Buffer.from(message, 'utf8'), port, address);
+    this.udpSocket.send(Buffer.from(message, "utf8"), port, address);
+  }
+
+  sendJSON(message: any = {}, { address = "localhost", port = 5000 }): void {
+    this.udpSocket.send(
+      Buffer.from(JSON.stringify(message), "utf8"),
+      port,
+      address
+    );
   }
 
   onClose(listener: () => void, listenerOptions?: ListenerOptions): void {

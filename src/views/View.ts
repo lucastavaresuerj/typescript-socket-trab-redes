@@ -16,9 +16,7 @@ export class View<ViewEvents extends string> {
   }
 
   onView(event: ViewEvents, callback: (context: any) => void) {
-    this.viewState.on(event, (context) => {
-      callback(context);
-    });
+    this.viewState.on(event, callback);
   }
 
   changeView(event: ViewEvents, context: any = {}) {
