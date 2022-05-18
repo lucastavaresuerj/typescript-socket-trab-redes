@@ -9,7 +9,7 @@ type argsOptions = {
 
 export default class Args {
   constructor(private options: argsOptions) {
-    this.args = process.argv.slice(2).toString().replace(",", " ");
+    this.args = process.argv.slice(2).toString().replace(/,/gi, " ");
   }
 
   args: string;
