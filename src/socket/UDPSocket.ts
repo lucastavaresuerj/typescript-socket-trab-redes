@@ -1,5 +1,10 @@
 import { createSocket, RemoteInfo, Socket, BindOptions } from "dgram";
 import { EventEmitter } from "stream";
+import {
+  NetworkInterfaceBase,
+  NetworkInterfaceInfo,
+  networkInterfaces,
+} from "os";
 
 export type ListenerOptions = {
   removeListenersBefore?: boolean;
@@ -27,9 +32,9 @@ export default class UDPSocket {
     } else {
       this.onListening((): void => {
         console.log(
-          `listening on 127.0.0.1:${bindOptions.port} to address ${
-            this.udpSocket.address().address
-          }`
+          `listening on \n\n${this.listeningAddress(
+            bindOptions.port || 3000
+          )} \nto address ${this.udpSocket.address().address}`
         );
       });
     }
@@ -100,5 +105,24 @@ export default class UDPSocket {
       console.error("Socket unbound", error);
       return null;
     }
+  }
+
+  private listeningAddress(port: number) {
+    const netInterfaces = networkInterfaces();
+    const netAddress = Object.keys(netInterfaces).map((netInterface) => {
+      return {
+        interfaceName: netInterface,
+        value: (netInterfaces[netInterface] as NetworkInterfaceBase[])[0]
+          .address, // ipv4
+      };
+    });
+
+    let address = "";
+
+    for (const netAdd of netAddress) {
+      address += `${netAdd.value}:${port} with interface ${netAdd.interfaceName}\n`;
+    }
+
+    return address;
   }
 }
