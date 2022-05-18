@@ -20,10 +20,11 @@ export default class Args {
         acc: { [key: string]: string | number | null },
         abrv: keyof argsOptions
       ) => {
-        const value = this.findValue({
-          abrv,
-          alias: this.options[abrv]?.alias,
-        });
+        const value =
+          this.findValue({
+            abrv,
+            alias: this.options[abrv]?.alias,
+          }) || this.options[abrv]?.default;
 
         let valueParse: string | number | null = null;
 
