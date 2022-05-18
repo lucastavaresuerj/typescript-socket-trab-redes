@@ -26,6 +26,8 @@ export default class UDPServer extends UDPSocket {
 
   sendJSON(message: any = {}, { address, port }: destination) {
     console.log(`Sending JSON to ${address}:${port}`);
-    super.sendJSON(message, { address, port });
+    setTimeout(() => 
+      super.sendJSON(message, { address, port }), 1500
+    )
   }
 }
